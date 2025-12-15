@@ -2,3 +2,9 @@
 .vscode/
 
 data/
+
+processed_data/
+
+pretrained_models/
+
+pretrained_vectors/

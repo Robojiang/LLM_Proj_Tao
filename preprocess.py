@@ -4,9 +4,18 @@ import re
 from collections import Counter
 import pickle
 import jieba
+import hanlp
 import nltk
 # nltk.download('punkt')
 from nltk.tokenize import word_tokenize
+from tqdm import tqdm
+
+
+
+HanLP_Tokenizer = hanlp.load(hanlp.pretrained.tok.COARSE_ELECTRA_SMALL_ZH) 
+# 或者使用更小的模型以加快速度: hanlp.pretrained.tok.COARSE_ELECTRA_SMALL_ZH
+# 或者使用更准的大模型: hanlp.pretrained.tok.FINE_ELECTRA_SMALL_ZH
+
 
 # --- 配置参数 ---
 # 数据目录
@@ -24,7 +33,7 @@ TEST_FILE = 'test.jsonl'
 # 句子最大长度
 MAX_LEN = 50
 # 词汇表最小词频
-MIN_FREQ = 5
+MIN_FREQ = 2
 
 # --- 数据清理与分词 ---
 
@@ -47,9 +56,17 @@ def tokenize_en(sentence):
     """英文分词"""
     return word_tokenize(sentence)
 
+# def tokenize_zh(sentence):
+#     """中文分词"""
+#     return jieba.lcut(sentence)
+
 def tokenize_zh(sentence):
-    """中文分词"""
-    return jieba.lcut(sentence)
+    """中文分词 (使用 HanLP)"""
+    # HanLP 返回的是一个列表
+    # 注意：HanLP 处理空字符串可能会报错或返回空，加个判断更稳健
+    if not sentence.strip():
+        return []
+    return HanLP_Tokenizer(sentence)
 
 def process_file(filepath, zh_vocab_counter, en_vocab_counter, is_train=False):
     """
@@ -59,7 +76,7 @@ def process_file(filepath, zh_vocab_counter, en_vocab_counter, is_train=False):
     print(f"正在处理文件: {filepath}")
     processed_pairs = []
     with open(filepath, 'r', encoding='utf-8') as f:
-        for line in f:
+        for line in tqdm(f, desc="Processing lines", unit="line"):
             pair = json.loads(line)
             zh_sent = pair.get('zh', '')
             en_sent = pair.get('en', '')
