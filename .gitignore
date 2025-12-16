@@ -8,3 +8,13 @@ processed_data/
 pretrained_models/
 
 pretrained_vectors/
+
+rnn/__pycache__/
+
+checkpoints/
+
+wandb/
+
+outputs/
+
+runs/
