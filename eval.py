@@ -3,6 +3,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import sacrebleu
 from rnn.models import Seq2Seq
+from transformer.models import TransformerNMT
 from tqdm import tqdm 
 
 PAD, UNK, SOS, EOS = '<PAD>', '<UNK>', '<SOS>', '<EOS>'
@@ -55,6 +56,42 @@ def detokenize(tokens):
     sentence = sentence.replace(" '", "'").replace(" n't", "n't")
     return sentence.strip()
 
+def load_model(cfg, zh_vocab, en_vocab, pad_src, pad_tgt, device):
+    """
+    根据配置动态加载模型（支持 RNN 和 Transformer）
+    """
+    if cfg['model']['type'] == 'rnn':
+        model = Seq2Seq(
+            len(zh_vocab), len(en_vocab),
+            cfg['model']['emb_dim'], cfg['model']['hidden'],
+            pad_src, pad_tgt,
+            src_embeddings=None, tgt_embeddings=None,
+            attn_type=cfg['model']['attn'],
+            num_layers=cfg['model']['num_layers'],
+            dropout=cfg['model'].get('dropout', 0.1)
+        ).to(device)
+    elif cfg['model']['type'] == 'transformer':
+        model = TransformerNMT(
+            src_vocab_size=len(zh_vocab),
+            tgt_vocab_size=len(en_vocab),
+            d_model=cfg['model']['d_model'],
+            nhead=cfg['model']['nhead'],
+            num_encoder_layers=cfg['model']['num_encoder_layers'],
+            num_decoder_layers=cfg['model']['num_decoder_layers'],
+            dim_feedforward=cfg['model']['dim_feedforward'],
+            dropout=cfg['model']['dropout'],
+            pos_embedding_type=cfg['model']['pos_embedding_type'],
+            norm_type=cfg['model']['norm_type'],
+            src_pad_idx=pad_src,
+            tgt_pad_idx=pad_tgt,
+            src_embeddings=None,
+            tgt_embeddings=None,
+            emb_dim=cfg['model']['emb_dim']
+        ).to(device)
+    else:
+        raise ValueError(f"不支持的模型类型: {cfg['model']['type']}")
+    return model
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', default='./processed_data')
@@ -62,27 +99,29 @@ def main():
     parser.add_argument('--ckpt', default='./runs/rnn-gru_rnn_additive_20251216_170754/epoch_20.pt')
     parser.add_argument('--decode', choices=['greedy','beam'], default='greedy')
     parser.add_argument('--beam_size', type=int, default=4)
-    parser.add_argument('--max_len', type=int, default=50)
+    parser.add_argument('--max_len', type=int, default=60)
     parser.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
     args = parser.parse_args()
 
+    # 加载 checkpoint
     ckpt = torch.load(args.ckpt, map_location=args.device)
     cfg = ckpt['config']
     zh_vocab = ckpt['zh_vocab']; en_vocab = ckpt['en_vocab']
     id2en = {v:k for k,v in en_vocab.items()}
     pad_src, pad_tgt = zh_vocab[PAD], en_vocab[PAD]
 
+    # 加载测试数据
     test_ds = NMTDataset(os.path.join(args.data_dir, args.test_file), zh_vocab, args.max_len)
     loader = DataLoader(test_ds, batch_size=1, shuffle=False, collate_fn=lambda b: collate_fn(b, pad_src))
 
-    model = Seq2Seq(len(zh_vocab), len(en_vocab), cfg['model']['emb_dim'], cfg['model']['hidden'], pad_src, pad_tgt,
-                    src_embeddings=None, tgt_embeddings=None, attn_type=cfg['model']['attn'], num_layers=2).to(args.device)
+    # 动态加载模型
+    model = load_model(cfg, zh_vocab, en_vocab, pad_src, pad_tgt, args.device)
     model.load_state_dict(ckpt['model_state'])
     model.eval()
 
+    # 推理
     hyps, refs = [], []
     with torch.no_grad():
-        # 包装 loader，显示总步数
         pbar = tqdm(loader, desc="推理中", total=len(loader))
         for src, src_lens, tgt_ref in pbar:
             src, src_lens = src.to(args.device), src_lens.to(args.device)
@@ -95,6 +134,7 @@ def main():
             if tgt_ref[0] is not None:
                 refs.append([detokenize(tgt_ref[0])])
     
+    # 计算 BLEU 分数
     if refs:
         bleu = sacrebleu.corpus_bleu(hyps, refs)
         print(f"BLEU = {bleu.score:.2f}")

@@ -1,0 +1,8 @@
+
+# @package train
+epochs: 100
+batch_size: 64
+lr: 0.001
+clip: 1.0
+resume: null
+scheduler: null  # RNN 通常不需要复杂的调度器

@@ -1,0 +1,20 @@
+# 默认配置
+defaults:
+  - model: transformer # 默认加载 rnn 模型配置 transformer
+  - train: ${model}  # 根据所选模型加载对应的训练配置
+  - _self_
+
+experiment: base-experiment
+seed: 42
+device: cuda
+
+data:
+  dir: ./processed_data
+  train_file: train.jsonl
+  valid_file: valid.jsonl
+  max_len: 50
+
+wandb:
+  enable: true
+  project: nmt-course
+  run_name: null
