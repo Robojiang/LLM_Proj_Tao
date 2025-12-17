@@ -95,8 +95,8 @@ def load_model(cfg, zh_vocab, en_vocab, pad_src, pad_tgt, device):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', default='./processed_data')
-    parser.add_argument('--test_file', default='train_test.jsonl')
-    parser.add_argument('--ckpt', default='./runs/20251217_140918_transformer_relative_layernorm/epoch_15.pt')
+    parser.add_argument('--test_file', default='test.jsonl')
+    parser.add_argument('--ckpt', default='./runs/20251217_140918_transformer_relative_layernorm/epoch_10.pt')
     parser.add_argument('--decode', choices=['greedy','beam'], default='greedy')
     parser.add_argument('--beam_size', type=int, default=4)
     parser.add_argument('--max_len', type=int, default=50)
@@ -130,6 +130,7 @@ def main():
             else:
                 out_ids = model.beam_search(src, src_lens, args.max_len, en_vocab[SOS], en_vocab[EOS], beam_size=args.beam_size)
             toks = ids_to_tokens(out_ids[0].tolist(), id2en)
+            toks = toks[1:] if toks[0] == SOS else toks  # 去掉开头的<SOS>
             hyps.append(detokenize(toks))
             if tgt_ref[0] is not None:
                 refs.append([detokenize(tgt_ref[0])])
