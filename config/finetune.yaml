@@ -1,0 +1,36 @@
+# 实验和设备配置
+experiment: t5-finetune
+seed: 42
+device: cuda
+
+# 数据配置
+data:
+  dir: ./processed_data
+  train_file: train.jsonl
+  valid_file: valid.jsonl
+  max_len: 50 # 与你的预处理保持一致
+
+model:
+  name: t5-small
+  finetune_method: full # 微调方法: full | lora
+  # LoRA 配置 (仅在 finetune_method=lora 时生效)
+  lora:
+    r: 8
+    lora_alpha: 16
+    lora_dropout: 0.1
+    target_modules: ["q", "v"] # 对 T5 的 q 和 v 矩阵应用 LoRA
+
+train:
+  epochs: 10
+  batch_size: 128
+  lr: 3e-5
+  scheduler: linear # linear | constant
+  warmup_steps: 0
+  resume_from: null  # 指定 checkpoint 文件路径，例如 ./runs/t5_finetune/checkpoint_epoch_3.pt
+  save_every: 3      # 每 3 个 epoch 保存一个 checkpoint
+
+# W&B 配置
+wandb:
+  enable: true
+  project: nmt-course-finetune # 为微调任务创建新项目
+  run_name: t5-small-full-finetune

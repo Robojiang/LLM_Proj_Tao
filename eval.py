@@ -95,11 +95,11 @@ def load_model(cfg, zh_vocab, en_vocab, pad_src, pad_tgt, device):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', default='./processed_data')
-    parser.add_argument('--test_file', default='test.jsonl')
-    parser.add_argument('--ckpt', default='./runs/rnn-gru_rnn_additive_20251216_170754/epoch_20.pt')
+    parser.add_argument('--test_file', default='train_test.jsonl')
+    parser.add_argument('--ckpt', default='./runs/20251217_140918_transformer_relative_layernorm/epoch_15.pt')
     parser.add_argument('--decode', choices=['greedy','beam'], default='greedy')
     parser.add_argument('--beam_size', type=int, default=4)
-    parser.add_argument('--max_len', type=int, default=60)
+    parser.add_argument('--max_len', type=int, default=50)
     parser.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
     args = parser.parse_args()
 
@@ -136,7 +136,7 @@ def main():
     
     # 计算 BLEU 分数
     if refs:
-        bleu = sacrebleu.corpus_bleu(hyps, refs)
+        bleu = sacrebleu.corpus_bleu(hyps, list(zip(*refs)))
         print(f"BLEU = {bleu.score:.2f}")
         print(f"示例翻译（前5条）：")
         for i in range(min(5, len(hyps))):
