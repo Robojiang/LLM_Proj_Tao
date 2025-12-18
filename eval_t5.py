@@ -6,7 +6,7 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_dir', default='./runs/t5-finetune_t5-small_full_20251217_193018/best_model')
+    parser.add_argument('--model_dir', default='./runs/20251217_220614_t5-finetune-raw_t5-small_full_raw/best_model')
     parser.add_argument('--data_dir', default='./processed_data')
     parser.add_argument('--test_file', default='valid.jsonl')
     parser.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')

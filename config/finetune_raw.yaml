@@ -1,5 +1,5 @@
 # 实验和设备配置
-experiment: t5-finetune-raw
+experiment: mt5-finetune-raw
 seed: 42
 device: cuda
 
@@ -11,21 +11,21 @@ data:
   max_len: 80 # 与你的预处理保持一致
 
 model:
-  name: t5-small
-  finetune_method: full # 微调方法: full | lora
+  name: google/mt5-small # mt5-small | mt5-base | mt5-large
+  finetune_method: lora # 微调方法: full | lora
   # LoRA 配置 (仅在 finetune_method=lora 时生效)
   lora:
     r: 8
     lora_alpha: 16
     lora_dropout: 0.1
-    target_modules: ["q", "v"] # 对 T5 的 q 和 v 矩阵应用 LoRA
+    target_modules: ["q", "v", "k", "o"]  # 覆盖更多模块 # mT5的attention模块名称略有不同
 
 train:
-  epochs: 100
-  batch_size: 64
-  lr: 3e-5
+  epochs: 20
+  batch_size: 12
+  lr: 1e-4
   scheduler: linear # linear | constant
-  warmup_steps: 0
+  warmup_steps: 1000
   resume_from: null  # 指定 checkpoint 文件路径，例如 ./runs/t5_finetune/checkpoint_epoch_3.pt
   save_every: 3      # 每 3 个 epoch 保存一个 checkpoint
 
@@ -33,4 +33,4 @@ train:
 wandb:
   enable: True
   project: nmt-course-finetune-raw # 为微调任务创建新项目
-  run_name: t5-small-full-finetune-raw
+  run_name: mt5-small-${model.finetune_method}-finetune-raw

@@ -1,6 +1,6 @@
 import os, json, torch
 from torch.utils.data import Dataset, DataLoader
-from transformers import T5Tokenizer, T5ForConditionalGeneration, get_linear_schedule_with_warmup
+from transformers import MT5Tokenizer, MT5ForConditionalGeneration, get_linear_schedule_with_warmup
 from torch.optim import AdamW
 from tqdm import tqdm
 import hydra
@@ -81,8 +81,8 @@ def main(cfg: DictConfig):
 
     # --- 加载模型和分词器 ---
     print(f"加载模型: {cfg.model.name}")
-    tokenizer = T5Tokenizer.from_pretrained(cfg.model.name)
-    model = T5ForConditionalGeneration.from_pretrained(cfg.model.name)
+    tokenizer = MT5Tokenizer.from_pretrained(cfg.model.name)
+    model = MT5ForConditionalGeneration.from_pretrained(cfg.model.name,use_safetensors=True)
 
     # --- 微调方法选择 ---
     if cfg.model.finetune_method == 'lora':
