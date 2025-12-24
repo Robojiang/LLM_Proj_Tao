@@ -18,3 +18,6 @@ wandb/
 outputs/
 
 runs/
+
+transformer/__pycache__/
+rnn/__pycache__/

@@ -6,13 +6,13 @@ import pickle
 import jieba
 import hanlp
 import nltk
-# nltk.download('punkt')
+# nltk.download('punkt_tab')
 from nltk.tokenize import word_tokenize
 from tqdm import tqdm
 
 
 
-HanLP_Tokenizer = hanlp.load(hanlp.pretrained.tok.COARSE_ELECTRA_SMALL_ZH) 
+HanLP_Tokenizer = hanlp.load(hanlp.pretrained.tok.FINE_ELECTRA_SMALL_ZH) 
 # 或者使用更小的模型以加快速度: hanlp.pretrained.tok.COARSE_ELECTRA_SMALL_ZH
 # 或者使用更准的大模型: hanlp.pretrained.tok.FINE_ELECTRA_SMALL_ZH
 
@@ -31,7 +31,7 @@ VALID_FILE = 'valid.jsonl'
 TEST_FILE = 'test.jsonl'
 
 # 句子最大长度
-MAX_LEN = 50
+MAX_LEN = 80
 # 词汇表最小词频
 MIN_FREQ = 2
 

@@ -12,7 +12,7 @@ data:
   dir: ./processed_data
   train_file: train.jsonl
   valid_file: valid.jsonl
-  max_len: 50
+  max_len: 80
 
 wandb:
   enable: true
