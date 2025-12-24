@@ -1,4 +1,6 @@
-import os, json, torch
+import os
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+import json, torch
 from torch.utils.data import Dataset, DataLoader
 from transformers import MT5Tokenizer, MT5ForConditionalGeneration, get_linear_schedule_with_warmup
 from torch.optim import AdamW
@@ -81,8 +83,10 @@ def main(cfg: DictConfig):
 
     # --- 加载模型和分词器 ---
     print(f"加载模型: {cfg.model.name}")
-    tokenizer = MT5Tokenizer.from_pretrained(cfg.model.name)
-    model = MT5ForConditionalGeneration.from_pretrained(cfg.model.name,use_safetensors=True)
+    cache_dir = "./hf_cache"
+    os.makedirs(cache_dir, exist_ok=True)
+    tokenizer = MT5Tokenizer.from_pretrained(cfg.model.name, cache_dir=cache_dir)
+    model = MT5ForConditionalGeneration.from_pretrained(cfg.model.name, use_safetensors=True, cache_dir=cache_dir)
 
     # --- 微调方法选择 ---
     if cfg.model.finetune_method == 'lora':
@@ -124,7 +128,8 @@ def main(cfg: DictConfig):
     )
 
     # --- 优化器和调度器 ---
-    optimizer = AdamW(model.parameters(), lr=cfg.train.lr)
+    weight_decay = cfg.train.get("weight_decay", 0.01)
+    optimizer = AdamW(model.parameters(), lr=cfg.train.lr, weight_decay=weight_decay)
     total_steps = len(train_loader) * cfg.train.epochs
     if cfg.train.scheduler == 'linear':
         scheduler = get_linear_schedule_with_warmup(

@@ -21,3 +21,5 @@ runs/
 
 transformer/__pycache__/
 rnn/__pycache__/
+
+hf_cache/
