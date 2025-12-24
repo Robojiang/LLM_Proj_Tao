@@ -1,6 +1,6 @@
 # 默认配置
 defaults:
-  - model: rnn # 默认加载 rnn 模型配置 transformer
+  - model: transformer # 默认加载 rnn 模型配置 transformer
   - train: ${model}  # 根据所选模型加载对应的训练配置
   - _self_
 
@@ -16,5 +16,5 @@ data:
 
 wandb:
   enable: true
-  project: nmt-course-rnn
+  project: nmt-course-${model.type}
   run_name: null

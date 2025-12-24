@@ -1,7 +1,7 @@
 # filepath: /media/tao/E8F6F2ECF6F2BA40/河套学院相关/课程作业/llm/proj/config/train/transformer.yaml
 # @package train
-epochs: 100
-batch_size: 64 # Transformer 更耗显存
+epochs: 50
+batch_size: 128 # Transformer 更耗显存
 lr: 0.0001     # Transformer 对学习率更敏感
 clip: 1.0
 resume: null

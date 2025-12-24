@@ -45,7 +45,7 @@ echo "Running RNN Experiment 4: Additive Attention with Scheduled Sampling (TF=0
 python train.py \
     model=rnn \
     model.attn=additive \
-    model.teacher_forcing=0.5 \
+    model.teacher_forcing=1 \
 
 echo "Running RNN Experiment 4: Additive Attention with Scheduled Sampling (TF=0.0)"
 python train.py \

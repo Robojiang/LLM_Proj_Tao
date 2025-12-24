@@ -7,7 +7,7 @@ nhead: 8
 num_encoder_layers: 6
 num_decoder_layers: 6
 dim_feedforward: 2048
-dropout: 0.1
-emb_dim: 300 # Transformer 中 emb_dim 必须等于 d_model 除非使用线性映射
+dropout: 0.5
+emb_dim: 300 # Transformer 中 emb_dim 必须等于 d_model 除非使用线性映射, 已经使用线性映射了
 src_emb: ./processed_data/zh_embedding_matrix.npy
 tgt_emb: ./processed_data/en_embedding_matrix.npy

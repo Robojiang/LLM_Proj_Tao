@@ -4,7 +4,7 @@ attn: additive # additive | dot
 emb_dim: 300
 hidden: 256
 num_layers: 2
-teacher_forcing: 1
-dropout: 0.3
+teacher_forcing: 0.5
+dropout: 0.5
 src_emb: ./processed_data/zh_embedding_matrix.npy
 tgt_emb: ./processed_data/en_embedding_matrix.npy

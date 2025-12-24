@@ -94,7 +94,7 @@ def create_exp_dir(cfg):
     if cfg.model.type == "rnn":
         exp_name = f"{timestamp}_{cfg.model.type}_{cfg.model.attn}_{cfg.model.get('teacher_forcing', 1.0)}_{cfg.model.hidden}"
     else:
-        exp_name = f"{timestamp}_{cfg.model.type}_{cfg.model.pos_embedding_type}_{cfg.model.norm_type}"
+        exp_name = f"{timestamp}_{cfg.model.type}_{cfg.model.pos_embedding_type}_{cfg.model.norm_type}_{cfg.train.batch_size}_{cfg.train.lr}_{cfg.model.d_model}"
     exp_dir = os.path.join("./runs", exp_name)
     os.makedirs(exp_dir, exist_ok=True)
     
