@@ -6,7 +6,7 @@ import pickle
 import jieba
 import hanlp
 import nltk
-# nltk.download('punkt_tab')
+nltk.download('punkt_tab')
 from nltk.tokenize import word_tokenize
 from tqdm import tqdm
 

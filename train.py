@@ -178,7 +178,7 @@ def main(cfg: DictConfig):
         raise ValueError(f"不支持的模型类型: {cfg.model.type}")
 
     criterion = nn.CrossEntropyLoss(ignore_index=pad_tgt)
-    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.train.lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.train.lr, weight_decay=cfg.train.get('weight_decay', 0.0))
 
     # --- 新增：学习率调度器 ---
     num_training_steps = len(train_loader) * cfg.train.epochs
@@ -285,7 +285,7 @@ def main(cfg: DictConfig):
             save_checkpoint(model, optimizer, epoch, best_val, cfg, zh_vocab, en_vocab, best_ckpt_path, wandb_id)
             print(f"✓ 保存最佳模型到 {best_ckpt_path}")
 
-        if epoch % 5 == 0:
+        if epoch % 10 == 0:
             periodic_path = os.path.join(exp_dir, f"epoch_{epoch}.pt")
             save_checkpoint(model, optimizer, epoch, best_val, cfg, zh_vocab, en_vocab, periodic_path, wandb_id)
             print(f"✓ 定期保存到 {periodic_path}")
