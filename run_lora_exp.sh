@@ -11,6 +11,8 @@ cd /mnt/afs/250010074/llm/LLM_Proj_Tao
 
 # 指定 GPU
 export CUDA_VISIBLE_DEVICES=0
+# 解决 numexpr 警告，允许使用更多 CPU 核心进行计算
+export NUMEXPR_MAX_THREADS=192
 
 echo "🚀 开始运行 LoRA Rank 对比实验..."
 
