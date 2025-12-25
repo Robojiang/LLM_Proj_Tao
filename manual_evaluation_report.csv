@@ -1,0 +1,2 @@
+name,bleu,details
+"Transformer (Tiny: d=768, L=9) [Beam=5]",8.03,beam (b=5)

@@ -22,7 +22,7 @@ model:
 
 train:
   epochs: 50 # 减少训练轮数
-  batch_size: 128
+  batch_size: 64
   lr: 5e-5 # 降低学习率
   weight_decay: 0.1 # 增加权重衰减
   scheduler: linear # linear | constant
