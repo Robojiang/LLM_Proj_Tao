@@ -51,8 +51,20 @@ python inference.py --decode beam --beam_size 4
 
 如果需要修改，可以使用 `--processed_data` 和 `--raw_data` 参数。
 
-## 模型权重路径
-脚本默认从以下路径加载模型：
+
+## 权重获取与路径
+
+由于模型权重较大，已统一存放在公用服务器：
+
+**路径：** `/mnt/afs/share/LLM_Project/250010074/best_weight/`
+
+请将该文件夹复制到你的项目根目录下（与 inference.py 同级），命令如下：
+
+```bash
+cp -r /mnt/afs/share/LLM_Project/250010074/best_weight ./
+```
+
+复制后，脚本默认从以下路径加载模型：
 - RNN: `best_weight/RNN/best.pt`
 - Transformer: `best_weight/Transformer/best.pt`
 - MT5: `best_weight/MT5/best_model`
