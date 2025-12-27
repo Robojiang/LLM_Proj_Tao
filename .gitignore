@@ -3,7 +3,6 @@
 
 data/
 
-processed_data/
 
 pretrained_models/
 
@@ -23,3 +22,5 @@ transformer/__pycache__/
 rnn/__pycache__/
 
 hf_cache/
+
+best_weight/
